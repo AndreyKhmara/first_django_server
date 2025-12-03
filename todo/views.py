@@ -35,6 +35,26 @@ class ToggleTodoCompleteView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class EditTodoCompleteView(APIView):
+    def patch(self, request, id, format=None):
+        try:
+            todo = Todo.objects.get(id=id)
+        except Todo.DoesNotExist:
+            return Response({"error": "Todo not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # обновляем поле title
+        title = request.data.get("title")
+        if title is None:
+            return Response({"error": "Missing 'complete' field"}, status=status.HTTP_400_BAD_REQUEST)
+
+        todo.title = title
+        todo.save()
+
+        serializer = TodoSerializer(todo)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 class TodoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
