@@ -9,7 +9,7 @@ from todo.serializers import TodoSerializer
 
 
 class TodoListCreateView(generics.ListCreateAPIView):
-    queryset = Todo.objects.all()  # в теории вот это для GET (получение всех todo)
+    queryset = Todo.objects.all()
     serializer_class = TodoSerializer
 
     def create(self, request, *args, **kwargs):  # def create для POST (Создание todo)
@@ -18,8 +18,6 @@ class TodoListCreateView(generics.ListCreateAPIView):
 
 class ToggleTodoCompleteView(APIView):
     def patch(self, request, id, format=None):
-        print("🔥 POPAL V CREATE!")
-        print("📦 DATA:", request.data)
         try:
             todo = Todo.objects.get(id=id)
         except Todo.DoesNotExist:
@@ -35,3 +33,9 @@ class ToggleTodoCompleteView(APIView):
 
         serializer = TodoSerializer(todo)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TodoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+    lookup_field = 'id'
